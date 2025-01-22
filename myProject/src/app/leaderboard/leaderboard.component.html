@@ -1,14 +1,25 @@
-<ul class="leaderboard">
-  @for (user of Users; track user.id) {
-    <li class="leaderboard-item">
-      <span class="user-name">{{user.name}}</span>
-      @if (user.booms) {
-        <span class="user-booms">💥{{user.booms}}x</span>
-      }
-      @if (user.poops) {
-        <span class="user-poops">💩{{user.poops}}x</span>
-      }
-      <span class="user-time">{{user.time}}</span>
-    </li>
-  }
-</ul>
+<ion-list class="leaderboard-list">
+    <ion-list-header>
+        <ion-label class="Leaderboard-title">Leaderboard</ion-label>
+    </ion-list-header>
+    @for (user of Users; track user.id) {
+        <ion-item>
+            <ion-avatar slot="start">
+                <ion-icon name="person-circle-outline" size="large"></ion-icon>
+            </ion-avatar>
+            <ion-label>
+                <h2 class="user-name">{{user.name}}</h2>
+                <p class="user-time">Time: {{user.time}}</p>
+            </ion-label>
+            @if (user.booms) {
+                <ion-note slot="end">💥 {{user.booms}}x</ion-note>
+            }
+            @if (user.poops) {
+                <ion-note slot="end">💩 {{user.poops}}x</ion-note>
+            }
+        </ion-item>
+    }
+    <ion-button (click)="onButtonClick()" fill="clear">see more</ion-button>
+
+</ion-list>
+<ion-button  class="StartBtn" expand="block" >Start Game</ion-button>

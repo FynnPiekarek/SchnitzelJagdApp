@@ -1,91 +1,52 @@
-/* General Leaderboard Styling */
-.leaderboard {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-width: 1000px;
-  width: 100%;
-  background-color: #fff;
-  border-radius: 15px; /* Rounded corners for iOS look */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* iOS-like shadow */
-  margin-top: 20px;
-  overflow: hidden;
+.leaderboard-list {
+  --ion-background-color: var(--ion-color-light); // Sanfter, heller Hintergrund
+  border-radius: 16px; // Runde Ecken
+  margin: 16px; // Etwas Abstand zur äußeren Umgebung
+  overflow: hidden; // Verhindern, dass Inhalte außerhalb der Ecken ragen
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // Leichter Schatten für Tiefe
+}
+.Leaderboard-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 1rem;
+  color: var(--ion-color-contrast-rgb);
 }
 
-.leaderboard-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.8rem 1.2rem; /* Adjusted padding */
-  border-bottom: 1px solid #ddd;
-  font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, sans-serif; /* iOS font */
-  font-size: 1rem; /* Standard iOS font size */
-  color: #333;
-}
-
-.leaderboard-item:last-child {
-  border-bottom: none;
+.leaderboard-list ion-item {
+  --background: var(--ion-color-light); // Hintergrund aller Einträge
+  border-bottom: 1px solid var(--ion-color-light-shade); // Feine Trennlinie zwischen den Einträgen
+  padding: 8px 16px; // Angenehmer Padding-Wert
 }
 
 .user-name {
-  font-weight: bold;
-  font-size: 1.2rem;
-  position: relative; /* To position booms/poops above the name */
+  font-weight: bold; // Fett für den Namen
+  font-size: 1.2rem; // Etwas größere Schriftart
+  margin: 0;
 }
 
 .user-time {
-  color: #666;
-  font-size: 1rem;
-  text-decoration: underline; /* Underlined time */
-  margin-left: 10px;
+  font-size: 0.9rem; // Kleinere Schrift für die Zeit
+  color: var(--ion-color-medium); // Dezenter Text
 }
 
-.user-booms, .user-poops {
-  font-size: 0.9rem; /* Smaller font size */
+ion-note {
   font-weight: bold;
-  display: inline-flex;
-  align-items: center;
-  top: -8px;
+  font-size: 0.9rem;
 }
 
-.user-booms {
-  color: #ff5722; /* Boom icon color */
-  left: 0; /* Position to the left of the name */
+[user-booms] {
+  color: red; // Highlights bei „Booms“
 }
 
-.user-poops {
-  color: #795548; /* Poop icon color */
-  right: 0; /* Position to the right of the name */
+.leaderboard-list ion-avatar ion-icon {
+  --color: gray;
 }
-
-/* iOS-like Button Style */
-button {
-  background-color: #34c759; /* iOS green */
+.StartBtn {
+  text-align: center;
+  font-weight: bold;
   color: white;
-  font-weight: bold;
-  font-size: 16px;
-  padding: 10px 20px;
-  border-radius: 12px; /* Rounded corners */
-  border: none;
-  margin-top: 30px;
-  width: 100%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #28a745; /* Slightly darker green */
-  }
-}
-
-/* iOS-like Header Styling */
-header {
-  font-size: 22px;
-  font-weight: bold;
-  text-align: center;
-  padding: 20px 0;
-  background-color: #f8f8f7;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: #333;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  height: 3rem;
 }

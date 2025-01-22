@@ -1,0 +1,7 @@
+<div>
+  <button (click)="getCurrentPosition()">Standort abrufen</button>
+  <div *ngIf="currentPosition">
+    <p>Breitengrad: {{ currentPosition.latitude }}</p>
+    <p>Längengrad: {{ currentPosition.longitude }}</p>
+  </div>
+</div>

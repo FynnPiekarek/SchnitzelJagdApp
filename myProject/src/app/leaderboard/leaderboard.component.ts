@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {Users} from "../mock-User";
 
 @Component({
   selector: 'app-leaderboard',
@@ -12,4 +13,5 @@ export class LeaderboardComponent  implements OnInit {
   ngOnInit() {}
 
 
+    protected readonly Users = Users;
 }

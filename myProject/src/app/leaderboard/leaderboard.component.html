@@ -1,3 +1,14 @@
-<p>
-  leaderboard works!
-</p>
+<ul class="leaderboard">
+  @for (user of Users; track user.id) {
+    <li class="leaderboard-item">
+      <span class="user-name">{{user.name}}</span>
+      @if (user.booms) {
+        <span class="user-booms">💥{{user.booms}}x</span>
+      }
+      @if (user.poops) {
+        <span class="user-poops">💩{{user.poops}}x</span>
+      }
+      <span class="user-time">{{user.time}}</span>
+    </li>
+  }
+</ul>

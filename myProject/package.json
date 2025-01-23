@@ -23,6 +23,7 @@
     "@angular/router": "^19.0.0",
     "@capacitor/app": "7.0.0",
     "@capacitor/barcode-scanner": "^2.0.1-dev-20250108T120736.0",
+    "@capacitor/camera": "^7.0.0",
     "@capacitor/core": "^7.0.0",
     "@capacitor/device": "^7.0.0",
     "@capacitor/dialog": "^7.0.0",

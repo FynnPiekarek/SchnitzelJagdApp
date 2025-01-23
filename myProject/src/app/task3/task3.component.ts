@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-import { BarcodeScanner } from '@capacitor/barcode-scanner';
-import { Dialog } from '@capacitor/dialog';
-import { Router } from '@angular/router';
+import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
 
 @Component({
   selector: 'app-task3',
@@ -9,81 +7,30 @@ import { Router } from '@angular/router';
   styleUrls: ['./task3.component.scss'],
 })
 export class Task3Component {
-  scannedCode: string | null = null; // Holds the scanned QR code
-  isCorrectCode: boolean = false; // Flag for the correct QR code
-  isScanning: boolean = false; // Indicates scanning state
+  private readonly VALID_QR_CODE = 'M335@ICT-BZ';
 
-  constructor(private router: Router) {}
+  constructor() {}
 
-  async startScan() {
+  async scanQRCode(): Promise<void> {
     try {
-      // Request permission for camera access
-      const status = await BarcodeScanner.checkPermission({ force: true });
+      // Start scanning for QR codes
+      const result = await CapacitorBarcodeScanner.scanBarcode({
+        hint: 0, // Use QR_CODE enum value from Html5QrcodeSupportedFormats (0 = QR_CODE)
+      });
 
-      if (status.granted) {
-        // Start scanning
-        this.isScanning = true;
-        const result = await BarcodeScanner.startScan();
-
-        // Stop scanning after obtaining result
-        this.isScanning = false;
-
-        // Process scanned content
-        if (result.hasContent) {
-          this.scannedCode = result.content;
-          this.isCorrectCode = this.scannedCode === 'M335@ICT-BZ';
-
-          if (this.isCorrectCode) {
-            await Dialog.alert({
-              title: 'Success',
-              message: 'You scanned the correct QR code!',
-              buttonTitle: 'Continue',
-            });
-          } else {
-            await Dialog.alert({
-              title: 'Error',
-              message: 'Incorrect QR code. Please try again.',
-              buttonTitle: 'OK',
-            });
-          }
+      // Validate the scanned QR code
+      if (result?.ScanResult) {
+        if (result.ScanResult === this.VALID_QR_CODE) {
+          alert('QR Code is valid!');
         } else {
-          await Dialog.alert({
-            title: 'Error',
-            message: 'No QR code detected. Please try again.',
-            buttonTitle: 'OK',
-          });
+          alert('Invalid QR Code.');
         }
       } else {
-        await Dialog.alert({
-          title: 'Permission Denied',
-          message: 'Camera access is required to scan QR codes.',
-          buttonTitle: 'OK',
-        });
+        alert('No QR Code detected.');
       }
     } catch (error) {
-      console.error('Error scanning QR code:', error);
-      this.isScanning = false;
+      console.error('Error during QR Code scanning:', error);
+      alert('An error occurred while scanning. Please try again.');
     }
-  }
-
-  async showExitDialog() {
-    const { value } = await Dialog.confirm({
-      title: 'Exit Task',
-      message: 'Are you sure you want to exit?',
-      okButtonTitle: 'Yes',
-      cancelButtonTitle: 'No',
-    });
-
-    if (value) {
-      this.router.navigate(['/home']); // Navigate to home route
-    }
-  }
-
-  async showInfoDialog() {
-    await Dialog.alert({
-      title: 'Information',
-      message: 'Scan the correct QR code with the content "M335@ICT-BZ".',
-      buttonTitle: 'OK',
-    });
   }
 }

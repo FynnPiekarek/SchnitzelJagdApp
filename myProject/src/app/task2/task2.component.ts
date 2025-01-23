@@ -16,14 +16,6 @@ const EXPECTED_COORDS = {
 @Component({
   selector: 'app-task1',
   templateUrl: './task1.component.html',
-  imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    NgStyle,
-    IonIcon
-  ],
   styleUrls: ['./task1.component.scss']
 })
 export class Task1Component {

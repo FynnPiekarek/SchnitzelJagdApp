@@ -1,35 +1,37 @@
 import { Component, OnInit } from '@angular/core';
 import {Users} from "../mock-User";
 import {
-    IonAvatar, IonBackButton, IonButton,
-    IonContent,
-    IonIcon,
-    IonItem,
-    IonLabel,
-    IonList,
-    IonListHeader,
-    IonNote
+  IonAlert,
+  IonAvatar, IonBackButton, IonButton,
+  IonContent,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonNote
 } from "@ionic/angular/standalone";
 import {addIcons} from "ionicons";
-import {personCircleOutline} from "ionicons/icons";
+import {personCircleOutline, save} from "ionicons/icons";
 import {User} from "../User";
 
 @Component({
     selector: 'app-leaderboard',
     templateUrl: './leaderboard.component.html',
     styleUrls: ['./leaderboard.component.scss'],
-    imports: [
-        IonContent,
-        IonList,
-        IonLabel,
-        IonIcon,
-        IonItem,
-        IonAvatar,
-        IonNote,
-        IonListHeader,
-        IonButton,
-        IonBackButton
-    ]
+  imports: [
+    IonContent,
+    IonList,
+    IonLabel,
+    IonIcon,
+    IonItem,
+    IonAvatar,
+    IonNote,
+    IonListHeader,
+    IonButton,
+    IonBackButton,
+    IonAlert
+  ]
 })
 export class LeaderboardComponent  implements OnInit {
 
@@ -39,24 +41,10 @@ export class LeaderboardComponent  implements OnInit {
   }
 
   ngOnInit() {
-      //this.sortFiveUserByTime();
   }
 
   Users = Users;
   AllUsers:User[] = Users;
-
-  //sortFiveUserByTime(){
-  //    this.Users.sort((a,b) => a.time - b.time);
-  //    this.Users = this.Users.slice(0,5)
-//
-  //}
-
-  //sortAllUserByTime(){
-//
-  //    console.log("working");
-  //    console.log(this.AllUsers);
-  //    this.AllUsers.sort((a,b) => a.time - b.time);
-  //}
 
     async handleUserDisplay(): Promise<void> {
         this.displayTopUsers();
@@ -87,6 +75,6 @@ export class LeaderboardComponent  implements OnInit {
     }
 
 
-
-
+  protected readonly save = save;
+  inputs: any;
 }

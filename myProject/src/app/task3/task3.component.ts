@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
 
 @Component({
@@ -7,7 +7,10 @@ import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
   styleUrls: ['./task3.component.scss'],
 })
 export class Task3Component {
+  @Output() taskCompleted = new EventEmitter<void>();
+
   private readonly VALID_QR_CODE = 'M335@ICT-BZ';
+  isTaskComplete: boolean = false; // Ensure the task completion state is preserved
 
   constructor() {}
 
@@ -20,8 +23,8 @@ export class Task3Component {
 
       // Validate the scanned QR code
       if (result?.ScanResult) {
-        if (result.ScanResult === this.VALID_QR_CODE) {
-          alert('QR Code is valid!');
+        if (result.ScanResult === this.VALID_QR_CODE && !this.isTaskComplete) {
+          this.completeTask();
         } else {
           alert('Invalid QR Code.');
         }
@@ -32,5 +35,12 @@ export class Task3Component {
       console.error('Error during QR Code scanning:', error);
       alert('An error occurred while scanning. Please try again.');
     }
+  }
+
+  private completeTask() {
+    this.isTaskComplete = true; // Ensure the task cannot be reverted
+    setTimeout(() => {
+      this.taskCompleted.emit(); // Notify parent component of task completion
+    }, 3000); // Wait for 3 seconds before emitting the event
   }
 }

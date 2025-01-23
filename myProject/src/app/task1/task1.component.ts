@@ -1,16 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { haversineDistance } from '../geolocation.utils';
 import { ChangeDetectorRef } from '@angular/core';
-import {NgIf, NgStyle} from "@angular/common";
-import { AlertController } from '@ionic/angular';
+import { NgIf, NgStyle } from '@angular/common';
 import { Router } from '@angular/router';
-import {IonButton, IonContent, IonHeader, IonIcon, IonTitle, IonToolbar} from "@ionic/angular/standalone";
+import { IonButton, IonContent, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { Dialog } from '@capacitor/dialog';
 
-const EXPECTED_COORDS = {
+/*const EXPECTED_COORDS = {
   latitude: 47.071945403994924,
   longitude: 8.348885173299777,
+};*/
+const EXPECTED_COORDS = {
+  latitude: 47.039399,
+  longitude: 8.322044,
 };
 
 @Component({
@@ -22,15 +25,18 @@ const EXPECTED_COORDS = {
     IonTitle,
     IonContent,
     NgStyle,
-    IonIcon
+    IonIcon,
   ],
-  styleUrls: ['./task1.component.scss']
+  styleUrls: ['./task1.component.scss'],
 })
-export class Task1Component {
+export class Task1Component implements OnInit {
+  @Output() taskCompleted = new EventEmitter<void>();
+
   currentPosition: { latitude: number; longitude: number } | null = null;
   watchId: string | null = null;
-  distanceToTarget: number = 0; // Default to 0
+  distanceToTarget: number = 0;
   isInTargetArea: boolean = false;
+  isTaskComplete: boolean = false; // Ensure task completion state is preserved
 
   constructor(private cdr: ChangeDetectorRef, private router: Router) {}
 
@@ -40,23 +46,22 @@ export class Task1Component {
 
   async startWatchingPosition() {
     try {
-      // Start watching position with high accuracy enabled
       this.watchId = await Geolocation.watchPosition(
         { enableHighAccuracy: true },
         (position, err) => {
           if (position) {
-            // Update current position
             const { latitude, longitude } = position.coords;
             this.currentPosition = { latitude, longitude };
 
-            // Calculate distance to target
             this.distanceToTarget = haversineDistance(this.currentPosition, EXPECTED_COORDS);
 
-            // Check if in target area (within 10 meters)
             this.isInTargetArea = this.distanceToTarget <= 10;
 
-            // Trigger manual change detection to ensure view updates
             this.cdr.detectChanges();
+
+            if (this.isInTargetArea && !this.isTaskComplete) {
+              this.completeTask(); // Trigger task completion if in the target area
+            }
           } else if (err) {
             console.error('Error getting location:', err);
           }
@@ -84,7 +89,7 @@ export class Task1Component {
     });
 
     if (value) {
-      this.router.navigate(['/1task']); // Redirect to /home
+      this.router.navigate(['/home']); // Redirect to home or another route
     }
   }
 
@@ -96,4 +101,11 @@ export class Task1Component {
     });
   }
 
+  private completeTask() {
+    this.isTaskComplete = true; // Ensure the task cannot be reverted
+    this.stopWatchingPosition(); // Stop tracking position to preserve resources
+    setTimeout(() => {
+      this.taskCompleted.emit(); // Notify parent component that task is complete
+    }, 3000); // Wait for 3 seconds before emitting the completion event
+  }
 }

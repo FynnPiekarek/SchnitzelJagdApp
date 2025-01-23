@@ -1,0 +1,12 @@
+.winscreen-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #28a745;
+
+  h1 {
+    color: white;
+    font-size: 32px;
+  }
+}

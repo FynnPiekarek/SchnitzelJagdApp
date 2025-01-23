@@ -2,68 +2,84 @@ import { Component, OnInit } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { haversineDistance } from '../geolocation.utils';
 import { ChangeDetectorRef } from '@angular/core';
-import {NgIf, NgStyle} from "@angular/common";
-import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import {IonButton, IonContent, IonHeader, IonIcon, IonTitle, IonToolbar} from "@ionic/angular/standalone";
 import { Dialog } from '@capacitor/dialog';
-
-const EXPECTED_COORDS = {
-  latitude: 47.071945403994924,
-  longitude: 8.348885173299777,
-};
+import { IonContent, IonHeader, IonIcon, IonTitle, IonToolbar } from "@ionic/angular/standalone";
+import { NgStyle } from "@angular/common";
 
 @Component({
-  selector: 'app-task1',
-  templateUrl: './task1.component.html',
-  styleUrls: ['./task1.component.scss']
+  selector: 'app-task2',
+  templateUrl: './task2.component.html',
+  imports: [
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    NgStyle,
+    IonIcon
+  ],
+  styleUrls: ['./task2.component.scss']
 })
-export class Task1Component {
+export class Task2Component implements OnInit {
+  startingPosition: { latitude: number; longitude: number } | null = null;
   currentPosition: { latitude: number; longitude: number } | null = null;
-  watchId: string | null = null;
-  distanceToTarget: number = 0; // Default to 0
-  isInTargetArea: boolean = false;
+  distanceFromStart: number = 0; // Distance from starting position
+  isFarEnough: boolean = false; // Whether the user is 10m away
+  watchId: string | null = null; // Declare the watchId property here
 
   constructor(private cdr: ChangeDetectorRef, private router: Router) {}
 
   async ngOnInit() {
-    await this.startWatchingPosition();
+    await this.setStartingPosition();
+    await this.trackPosition();
   }
 
-  async startWatchingPosition() {
+  async setStartingPosition() {
     try {
-      // Start watching position with high accuracy enabled
+      const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+      const { latitude, longitude } = position.coords;
+      this.startingPosition = { latitude, longitude };
+      console.log('Starting position set:', this.startingPosition);
+    } catch (error) {
+      console.error('Error getting starting position:', error);
+    }
+  }
+
+  async trackPosition() {
+    try {
       this.watchId = await Geolocation.watchPosition(
         { enableHighAccuracy: true },
         (position, err) => {
           if (position) {
-            // Update current position
             const { latitude, longitude } = position.coords;
             this.currentPosition = { latitude, longitude };
 
-            // Calculate distance to target
-            this.distanceToTarget = haversineDistance(this.currentPosition, EXPECTED_COORDS);
+            // Calculate distance from the starting position
+            if (this.startingPosition) {
+              this.distanceFromStart = haversineDistance(this.startingPosition, this.currentPosition);
+              console.log('Distance from start:', this.distanceFromStart);
 
-            // Check if in target area (within 10 meters)
-            this.isInTargetArea = this.distanceToTarget <= 10;
+              // Check if the user is at least 10m away
+              this.isFarEnough = this.distanceFromStart >= 10;
 
-            // Trigger manual change detection to ensure view updates
-            this.cdr.detectChanges();
+              // Trigger manual change detection to update UI
+              this.cdr.detectChanges();
+            }
           } else if (err) {
-            console.error('Error getting location:', err);
+            console.error('Error tracking position:', err);
           }
         }
       );
     } catch (error) {
-      console.error('Error starting position watcher:', error);
+      console.error('Error starting position tracking:', error);
     }
   }
 
-  stopWatchingPosition() {
+  stopTracking() {
     if (this.watchId) {
       Geolocation.clearWatch({ id: this.watchId });
       this.watchId = null;
-      console.log('Location tracking stopped.');
+      console.log('Position tracking stopped.');
     }
   }
 
@@ -76,16 +92,15 @@ export class Task1Component {
     });
 
     if (value) {
-      this.router.navigate(['/1task']); // Redirect to /home
+      this.router.navigate(['/home']); // Redirect to /home
     }
   }
 
   async showInfoDialog() {
     await Dialog.alert({
       title: 'Information',
-      message: 'Search and go to the Pingpong Table outside.',
+      message: 'Walk 10 meters away from your starting position to complete this task.',
       buttonTitle: 'Continue',
     });
   }
-
 }

@@ -10,8 +10,12 @@ export const routes: Routes = [
     loadComponent: () => import('./task1/task1.component').then((m) => m.Task1Component),
   },
   {
+    path: '2task',
+    loadComponent: () => import('./task2/task2.component').then((m) => m.Task2Component),
+  },
+  {
     path: '',
-    redirectTo: '/home',
+    redirectTo: 'home',
     pathMatch: 'full',
   },
 ];

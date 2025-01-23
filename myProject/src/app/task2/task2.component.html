@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title class="task-title">1/4</ion-title>
+    <ion-title class="task-title">2/4</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -8,9 +8,9 @@
   <div class="distance-container">
     <div
       class="distance-circle"
-      [ngStyle]="{ 'background-color': isInTargetArea ? 'green' : 'red' }"
+      [ngStyle]="{ 'background-color': isFarEnough ? 'green' : 'red' }"
     >
-      <p class="distance-text">{{ distanceToTarget.toFixed(2) }}m far away</p>
+      <p class="distance-text">{{ distanceFromStart.toFixed(2) }}m / 10m</p>
     </div>
   </div>
 

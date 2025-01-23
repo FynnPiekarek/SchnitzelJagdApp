@@ -1,0 +1,68 @@
+:host {
+  --ion-background-color: black;
+  --ion-text-color: white;
+}
+
+.task-title {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: white;
+}
+
+.distance-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh; /* Adjusts the placement */
+}
+
+.distance-circle {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.distance-text {
+  color: white;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2rem;
+  margin-top: 2rem;
+}
+
+.circle-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%; /* Make buttons circular */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  background-color: transparent;
+  border: none; /* Remove default borders */
+  outline: none; /* Remove focus outlines */
+}
+
+.red-button {
+  background-color: red; /* Custom red color */
+  color: white; /* Text/icon color */
+}
+
+.grey-button {
+  background-color: grey; /* Custom grey color */
+  color: white; /* Text/icon color */
+}
+
+ion-icon {
+  font-size: 1.5rem;
+  pointer-events: none; /* Prevent pointer interaction with the icon */
+}

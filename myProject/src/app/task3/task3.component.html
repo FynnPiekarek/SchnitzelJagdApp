@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="task-title">3/6</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="distance-container">
+    <button class="qr-scan-button" (click)="startScan()">
+      <ion-icon name="camera-outline"></ion-icon>
+    </button>
+  </div>
+
+  <div class="buttons-container">
+    <button class="circle-button red-button" (click)="showExitDialog()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+
+    <button class="circle-button grey-button" (click)="showInfoDialog()">
+      <ion-icon name="information-outline"></ion-icon>
+    </button>
+  </div>
+</ion-content>

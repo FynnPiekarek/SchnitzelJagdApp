@@ -118,7 +118,7 @@ export class Task2Component implements OnInit {
     });
 
     if (value) {
-      this.router.navigate(['/home']); // Redirect to home
+      await this.router.navigate(['/home']); // Redirect to home
     }
   }
 

@@ -8,6 +8,7 @@ import { WinscreenComponent } from './winscreen/winscreen.component';
 import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 import {provideStorage } from '@ionic/storage-angular';
 import { PLATFORM_ID } from '@angular/core';
+import {HomePage} from "./home/home.page";
 
 
 export const routes: Routes = [
@@ -21,4 +22,5 @@ export const routes: Routes = [
   { path: 'task3', component: Task3Component },
   { path: 'task4', component: Task4Component },
   { path: 'winscreen', component: WinscreenComponent },
+  { path: 'home', component: HomePage },
 ];

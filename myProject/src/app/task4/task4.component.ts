@@ -89,7 +89,7 @@ export class Task4Component implements OnInit, OnDestroy {
     });
 
     if (value) {
-      this.router.navigate(['/home']); // Redirect to home
+      await this.router.navigate(['/home']); // Redirect to home
     }
   }
 

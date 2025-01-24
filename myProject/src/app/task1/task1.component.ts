@@ -95,7 +95,7 @@ export class Task1Component implements OnInit {
     });
 
     if (value) {
-      this.router.navigate(['/home']); // Redirect to home or another route
+      await this.router.navigate(['/home']); // Redirect to home or another route
     }
   }
 

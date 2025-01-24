@@ -65,7 +65,7 @@ export class LeaderboardComponent implements OnInit {
     };
 
     this.AllUsers.push(newUser);
-    this.saveUsers();
+    this.saveUsers().then(r => this.Users);
   }
 
   async presentAlert() {

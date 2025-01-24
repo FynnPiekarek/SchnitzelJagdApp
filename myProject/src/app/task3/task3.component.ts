@@ -1,40 +1,41 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
+import { Dialog } from '@capacitor/dialog';
+import {IonContent, IonHeader, IonIcon, IonTitle, IonToolbar} from "@ionic/angular/standalone";
+import {NgClass} from "@angular/common";
 
 @Component({
   selector: 'app-task3',
   templateUrl: './task3.component.html',
   styleUrls: ['./task3.component.scss'],
+  imports: [
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    NgClass,
+    IonIcon
+  ]
 })
 export class Task3Component {
   @Output() taskCompleted = new EventEmitter<void>();
 
   private readonly VALID_QR_CODE = 'M335@ICT-BZ';
-  isTaskComplete: boolean = false; // Ensure the task completion state is preserved
-  taskIndex: number = 3; // Default task index for this component
+  isTaskComplete: boolean = false; // Task completion state
+  taskIndex: number = 3; // Update to reflect 3/4
+  isScanning: boolean = false; // To manage button state
 
-  constructor(private route: ActivatedRoute) {}
-
-  ngOnInit(): void {
-    this.syncTaskIndexWithRoute(); // Sync task index with route on initialization
-  }
-
-  // Sync the task index with the current route
-  private syncTaskIndexWithRoute(): void {
-    this.route.queryParams.subscribe((params) => {
-      this.taskIndex = params['taskIndex'] ? +params['taskIndex'] : this.taskIndex;
-    });
-  }
+  constructor(private router: Router) {}
 
   async scanQRCode(): Promise<void> {
     try {
-      // Start scanning for QR codes
+      this.isScanning = true; // Set button to scanning state (red -> green)
+
       const result = await CapacitorBarcodeScanner.scanBarcode({
-        hint: 0, // Use QR_CODE enum value from Html5QrcodeSupportedFormats (0 = QR_CODE)
+        hint: 0, // Use QR_CODE enum value (0 = QR_CODE)
       });
 
-      // Validate the scanned QR code
       if (result?.ScanResult) {
         if (result.ScanResult === this.VALID_QR_CODE && !this.isTaskComplete) {
           this.completeTask();
@@ -47,11 +48,35 @@ export class Task3Component {
     } catch (error) {
       console.error('Error during QR Code scanning:', error);
       alert('An error occurred while scanning. Please try again.');
+    } finally {
+      this.isScanning = false; // Revert button to red
     }
   }
 
   private completeTask(): void {
-    this.isTaskComplete = true; // Ensure the task cannot be reverted
-    this.taskCompleted.emit(); // Notify parent component (GameComponent) of task completion
+    this.isTaskComplete = true;
+    console.log('HEREHERE')
+    this.taskCompleted.emit();
+  }
+
+  async showExitDialog(): Promise<void> {
+    const { value } = await Dialog.confirm({
+      title: 'Exit Task',
+      message: 'Are you sure you want to exit?',
+      okButtonTitle: 'Yes',
+      cancelButtonTitle: 'No',
+    });
+
+    if (value) {
+      await this.router.navigate(['/home']); // Redirect to home
+    }
+  }
+
+  async showInfoDialog(): Promise<void> {
+    await Dialog.alert({
+      title: 'Information',
+      message: 'Walk 10 meters away from your starting position to complete this task.',
+      buttonTitle: 'Continue',
+    });
   }
 }

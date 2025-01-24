@@ -12,8 +12,8 @@ import { Dialog } from '@capacitor/dialog';
   longitude: 8.348885173299777,
 };*/
 const EXPECTED_COORDS = {
-  latitude: 47.039399,
-  longitude: 8.322044,
+  latitude: 47.039548,
+  longitude: 8.322323,
 };
 
 @Component({
@@ -31,6 +31,7 @@ const EXPECTED_COORDS = {
 })
 export class Task1Component implements OnInit {
   @Output() taskCompleted = new EventEmitter<void>();
+  currentTaskIndex: number = 1;
 
   currentPosition: { latitude: number; longitude: number } | null = null;
   watchId: string | null = null;
@@ -62,6 +63,7 @@ export class Task1Component implements OnInit {
             if (this.isInTargetArea && !this.isTaskComplete) {
               this.completeTask(); // Trigger task completion if in the target area
             }
+
           } else if (err) {
             console.error('Error getting location:', err);
           }

@@ -1,5 +1,5 @@
 <div class="game-container">
-  <!-- Render the appropriate task component based on the current task -->
+  <!-- Task components are dynamically displayed based on the current task -->
   <app-task1 *ngIf="currentTaskIndex === 1" (taskCompleted)="onTaskCompleted()"></app-task1>
   <app-task2 *ngIf="currentTaskIndex === 2" (taskCompleted)="onTaskCompleted()"></app-task2>
   <app-task3 *ngIf="currentTaskIndex === 3" (taskCompleted)="onTaskCompleted()"></app-task3>

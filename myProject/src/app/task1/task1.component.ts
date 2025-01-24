@@ -10,10 +10,14 @@ import { Dialog } from '@capacitor/dialog';
 /*const EXPECTED_COORDS = {
   latitude: 47.071945403994924,
   longitude: 8.348885173299777,
-};*/
-const EXPECTED_COORDS = {
+};
+/*const EXPECTED_COORDS = {
   latitude: 47.039548,
   longitude: 8.322323,
+};*/
+let EXPECTED_COORDS = {
+  latitude: 47.07155241605421,
+  longitude: 8.348743456228085,
 };
 
 @Component({
@@ -53,7 +57,7 @@ export class Task1Component implements OnInit {
           if (position) {
             const { latitude, longitude } = position.coords;
             this.currentPosition = { latitude, longitude };
-
+            EXPECTED_COORDS = this.currentPosition;
             this.distanceToTarget = haversineDistance(this.currentPosition, EXPECTED_COORDS);
 
             this.isInTargetArea = this.distanceToTarget <= 10;
@@ -107,6 +111,7 @@ export class Task1Component implements OnInit {
     this.isTaskComplete = true; // Ensure the task cannot be reverted
     this.stopWatchingPosition(); // Stop tracking position to preserve resources
     setTimeout(() => {
+      console.log('won first task');
       this.taskCompleted.emit(); // Notify parent component that task is complete
     }, 3000); // Wait for 3 seconds before emitting the completion event
   }

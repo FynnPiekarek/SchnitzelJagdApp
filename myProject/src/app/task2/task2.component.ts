@@ -21,7 +21,8 @@ import { NgStyle } from '@angular/common';
   styleUrls: ['./task2.component.scss'],
 })
 export class Task2Component implements OnInit {
-  @Output() taskCompleted = new EventEmitter<void>();
+  @Output() taskCompleted = new EventEmitter<void>(); // Emit a void event
+
 
   startingPosition: { latitude: number; longitude: number } | null = null;
   currentPosition: { latitude: number; longitude: number } | null = null;
@@ -37,11 +38,13 @@ export class Task2Component implements OnInit {
       private route: ActivatedRoute
   ) {}
 
-  async ngOnInit() {
-    this.syncTaskIndexWithRoute(); // Sync task index with the route
-    await this.setStartingPosition();
-    await this.trackPosition();
+  ngOnInit(): void {
+    console.log('Task2Component initialized');
+    this.syncTaskIndexWithRoute();
+    this.setStartingPosition();
+    this.trackPosition();
   }
+
 
   // Sync task index with the route
   private syncTaskIndexWithRoute(): void {
@@ -77,9 +80,10 @@ export class Task2Component implements OnInit {
                 console.log('Distance from start:', this.distanceFromStart);
 
                 // Check if the user is at least 10m away
-                this.isFarEnough = this.distanceFromStart >= 10;
+                this.isFarEnough = this.distanceFromStart >= 0;
 
                 if (this.isFarEnough && !this.isTaskComplete) {
+                  console.log('Far Enough');
                   this.completeTask();
                 }
 
@@ -129,10 +133,18 @@ export class Task2Component implements OnInit {
 
   // Mark the task as complete and emit the event to navigate
   private completeTask() {
+    console.log('inside complete task'); // Debug log
     this.isTaskComplete = true; // Prevent reverting the task state
     this.stopTracking(); // Stop tracking to optimize resources
+    console.log('after stop tracking'); // Debug log
     setTimeout(() => {
-      this.taskCompleted.emit(); // Notify the parent component (GameComponent)
+      try {
+        console.log('emitting taskCompleted'); // Debug log
+        this.taskCompleted.emit(); // Emit the event
+      } catch (error) {
+        console.error('Error emitting taskCompleted event:', error);
+      }
+      console.log('completed task completed');
     }, 3000); // Wait 3 seconds before emitting the event
   }
 }

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {Users} from "../mock-User";
+import { Storage } from '@ionic/storage-angular';
+import { AlertController } from '@ionic/angular';
+import { User } from '../User';
 import {
-  IonAlert,
-  IonAvatar, IonBackButton, IonButton,
-  IonContent,
+  IonAvatar,
+  IonButton,
   IonIcon,
   IonItem,
   IonLabel,
@@ -12,69 +13,118 @@ import {
   IonNote
 } from "@ionic/angular/standalone";
 import {addIcons} from "ionicons";
-import {personCircleOutline, save} from "ionicons/icons";
-import {User} from "../User";
+import {personCircleOutline} from "ionicons/icons";
 
 @Component({
-    selector: 'app-leaderboard',
-    templateUrl: './leaderboard.component.html',
-    styleUrls: ['./leaderboard.component.scss'],
+  selector: 'app-leaderboard',
+  templateUrl: './leaderboard.component.html',
+  styleUrls: ['./leaderboard.component.scss'],
   imports: [
-    IonContent,
     IonList,
     IonLabel,
-    IonIcon,
+    IonListHeader,
     IonItem,
     IonAvatar,
+    IonIcon,
     IonNote,
-    IonListHeader,
-    IonButton,
-    IonBackButton,
-    IonAlert
+    IonButton
   ]
 })
-export class LeaderboardComponent  implements OnInit {
+export class LeaderboardComponent implements OnInit {
+  Users: User[] = [];
+  AllUsers: User[] = [];
+  nextUserId: number = 1;
+  private _storage: Storage | null = null;
 
-  constructor() {
-      addIcons({personCircleOutline})
-      this.handleUserDisplay();
+  constructor(private alertController: AlertController, private storage: Storage) {
+    addIcons({personCircleOutline})
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this._storage = await this.storage.create();
+    await this.loadUsers();
+    this.nextUserId = this.AllUsers.length + 1;
   }
 
-  Users = Users;
-  AllUsers:User[] = Users;
+  private async loadUsers() {
+    const storedUsers = await this._storage?.get('users');
+    this.AllUsers = storedUsers || [];
+    this.displayTopUsers();
+  }
 
-    async handleUserDisplay(): Promise<void> {
-        this.displayTopUsers();
-        await this.waitForButtonClick();
-        this.displayAllUsers();
-    }
+  async saveUsers() {
+    await this._storage?.set('users', this.AllUsers);
+  }
 
-    waitForButtonClick(): Promise<void> {
-        return new Promise((resolve) => {
-            document.addEventListener('showAllUsers', () => resolve());
-        });
-    }
+  addUser(name: string) {
+    const newUser: User = {
+      id: this.nextUserId++,
+      name: name,
+      time: 0,
+      booms: 0,
+    };
 
-    displayTopUsers(): void {
-        this.Users = [...this.AllUsers];
-        this.Users.sort((a, b) => a.time - b.time);
-        this.Users = this.Users.slice(0, 5);
-    }
+    this.AllUsers.push(newUser);
+    this.saveUsers();
+  }
 
-    displayAllUsers(): void {
-        this.Users = [...this.AllUsers];
-        this.Users.sort((a, b) => a.time - b.time);
-    }
+  async presentAlert() {
+    const alert = await this.alertController.create({
+      header: 'Before we start',
+      message: 'Please enter your name to start the game',
+      inputs: [
+        {
+          name: 'username',
+          type: 'text',
+          placeholder: 'Enter your name',
+          attributes: {
+            id: 'username-input',
+          },
+        },
+      ],
+      buttons: [
+        {
+          text: 'Quit',
+          role: 'cancel',
+          handler: () => {
+            console.log('Game exited by user');
+          },
+        },
+        {
+          text: 'Save',
+          handler: (data) => {
+            if (data.username) {
+              this.addUser(data.username);
+            }
+          },
+          cssClass: 'save-button',
+          role: 'save',
+        },
+      ],
+    });
 
-    onButtonClick(): void {
-        const event = new Event('showAllUsers');
-        document.dispatchEvent(event);
-    }
+    await alert.present();
 
+    const inputElement = document.getElementById('username-input') as HTMLInputElement;
+    const saveButton = document.getElementsByClassName('save-button')[0] as HTMLButtonElement;
 
-  protected readonly save = save;
-  inputs: any;
+    inputElement.addEventListener('input', () => {
+      saveButton.disabled = !inputElement.value.trim();
+    });
+  }
+
+  displayTopUsers(): void {
+    this.Users = [...this.AllUsers];
+    this.Users.sort((a, b) => a.time - b.time);
+    this.Users = this.Users.slice(0, 5);
+  }
+
+  displayAllUsers(): void {
+    this.Users = [...this.AllUsers];
+    this.Users.sort((a, b) => a.time - b.time);
+  }
+
+  onButtonClick(): void {
+    this.displayAllUsers();
+  }
 }

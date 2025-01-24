@@ -22,16 +22,5 @@
     <ion-button (click)="onButtonClick()" fill="clear">see more</ion-button>
 
 </ion-list>
-<ion-button id="present-alert"  class="StartBtn" expand="block" >Start Game</ion-button>
-<ion-alert
-  trigger="present-alert"
-  header="before we start"
-  message="Please enter your name to start the game"
-  [buttons]="[
-  {
-  text: 'Start',
-  role: 'start',
-  }
-  ]"
-  ></ion-alert>
+<ion-button (click)="presentAlert()"  class="StartBtn" expand="block" >Start Game</ion-button>
 

@@ -5,9 +5,16 @@ import { Task2Component } from './task2/task2.component';
 import { Task3Component } from './task3/task3.component';
 import { Task4Component } from './task4/task4.component';
 import { WinscreenComponent } from './winscreen/winscreen.component';
+import { LeaderboardComponent } from './leaderboard/leaderboard.component';
+import {provideStorage } from '@ionic/storage-angular';
+import { PLATFORM_ID } from '@angular/core';
+
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'game', pathMatch: 'full' },
+  {
+    path: '', component: LeaderboardComponent
+  },
+
   { path: 'game', component: GameComponent },
   { path: 'task1', component: Task1Component },
   { path: 'task2', component: Task2Component },

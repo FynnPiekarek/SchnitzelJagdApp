@@ -14,6 +14,9 @@ import {
 } from "@ionic/angular/standalone";
 import {addIcons} from "ionicons";
 import {personCircleOutline} from "ionicons/icons";
+import {Capacitor} from "@capacitor/core";
+import {Geolocation} from "@capacitor/geolocation";
+import {Camera, CameraResultType, CameraPermissionType} from "@capacitor/camera";
 
 @Component({
   selector: 'app-leaderboard',
@@ -95,6 +98,7 @@ export class LeaderboardComponent implements OnInit {
           handler: (data) => {
             if (data.username) {
               this.addUser(data.username);
+              this.showAllowAccessAlert()
             }
           },
           cssClass: 'save-button',
@@ -112,6 +116,48 @@ export class LeaderboardComponent implements OnInit {
       saveButton.disabled = !inputElement.value.trim();
     });
   }
+
+  async showAllowAccessAlert() {
+    const alert = await this.alertController.create({
+      header: 'Zugriffsanfrage erforderlich',
+      message: 'Möchtest du den Zugriff auf die Kamera und den Standort erlauben?',
+      buttons: [
+        {
+          text: 'Ablehnen',
+          role: 'cancel',
+          handler: () => {
+            console.log('Berechtigungen wurden abgelehnt');
+          },
+        },
+        {
+          text: 'Erlauben',
+          handler: () => {
+            this.requestPermissions();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  async requestPermissions() {
+    try {
+      if (Capacitor) {
+        const geoPermission = await Geolocation.requestPermissions();
+        console.log('Standortberechtigung:', geoPermission);
+
+        const cameraPermission = await Camera.requestPermissions();
+        console.log('Kameraberechtigung:', cameraPermission);
+
+      } else {
+        console.warn('Berechtigungen können nur auf nativen Plattformen angefordert werden.');
+      }
+    } catch (error) {
+      console.error('Fehler beim Anfordern der Berechtigungen:', error);
+    }
+  }
+
 
   displayTopUsers(): void {
     this.Users = [...this.AllUsers];

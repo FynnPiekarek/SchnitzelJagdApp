@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import {Task1Component} from "../task1/task1.component";
-import {Task2Component} from "../task2/task2.component";
-import {Task3Component} from "../task3/task3.component";
-import {Task4Component} from "../task4/task4.component";
-import {NgIf} from "@angular/common";
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Task1Component } from '../task1/task1.component';
+import { Task2Component } from '../task2/task2.component';
+import { Task3Component } from '../task3/task3.component';
+import { Task4Component } from '../task4/task4.component';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-game',
@@ -15,16 +15,33 @@ import {NgIf} from "@angular/common";
     Task2Component,
     Task3Component,
     Task4Component,
-    NgIf
-  ]
+    NgIf,
+  ],
 })
-export class GameComponent {
-  currentTaskIndex: number = 1; // Start with Task 1
+export class GameComponent implements OnInit {
+  currentTaskIndex: number = 1; // Default to Task 1
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.startGame();
+    // Sync currentTaskIndex with the route on initialization
+    this.syncTaskIndexWithRoute();
+  }
+
+  // Sync the task index with the current route
+  private syncTaskIndexWithRoute(): void {
+    const currentRoute = this.router.url; // Get the current route
+    const match = currentRoute.match(/\/task(\d+)/); // Extract task number from the route
+    if (match) {
+      this.currentTaskIndex = parseInt(match[1], 10); // Update currentTaskIndex
+    } else {
+      this.currentTaskIndex = 1; // Default to Task 1 if no match
+    }
+
+    // Start the game by navigating to the first task (if needed)
+    if (this.currentTaskIndex === 1) {
+      this.startGame();
+    }
   }
 
   // Start the game by navigating to the first task
@@ -36,6 +53,7 @@ export class GameComponent {
   async onTaskCompleted(): Promise<void> {
     if (this.currentTaskIndex < 4) {
       this.currentTaskIndex++;
+      console.log(`Task completed. Navigating to Task ${this.currentTaskIndex}`);
       this.navigateToTask(this.currentTaskIndex);
     } else {
       this.navigateToWinScreen();

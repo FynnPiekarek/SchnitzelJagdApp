@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { haversineDistance } from '../geolocation.utils';
 import { ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Dialog } from '@capacitor/dialog';
 import { IonContent, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { NgStyle } from '@angular/common';
@@ -25,18 +25,32 @@ export class Task2Component implements OnInit {
 
   startingPosition: { latitude: number; longitude: number } | null = null;
   currentPosition: { latitude: number; longitude: number } | null = null;
-  distanceFromStart: number = 0;
-  isFarEnough: boolean = false;
+  distanceFromStart: number = 0; // Distance from the starting position
+  isFarEnough: boolean = false; // Indicates if the user is 10m away
   isTaskComplete: boolean = false; // Ensure task completion state is preserved
-  watchId: string | null = null;
+  watchId: string | null = null; // ID for geolocation watcher
+  taskIndex: number = 2; // Default task index for this component
 
-  constructor(private cdr: ChangeDetectorRef, private router: Router) {}
+  constructor(
+      private cdr: ChangeDetectorRef,
+      private router: Router,
+      private route: ActivatedRoute
+  ) {}
 
   async ngOnInit() {
+    this.syncTaskIndexWithRoute(); // Sync task index with the route
     await this.setStartingPosition();
     await this.trackPosition();
   }
 
+  // Sync task index with the route
+  private syncTaskIndexWithRoute(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.taskIndex = params['taskIndex'] ? +params['taskIndex'] : this.taskIndex;
+    });
+  }
+
+  // Set the starting position when the component loads
   async setStartingPosition() {
     try {
       const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
@@ -48,6 +62,7 @@ export class Task2Component implements OnInit {
     }
   }
 
+  // Track the current position and calculate the distance from the starting position
   async trackPosition() {
     try {
       this.watchId = await Geolocation.watchPosition(
@@ -57,7 +72,6 @@ export class Task2Component implements OnInit {
               const { latitude, longitude } = position.coords;
               this.currentPosition = { latitude, longitude };
 
-              // Calculate distance from the starting position
               if (this.startingPosition) {
                 this.distanceFromStart = haversineDistance(this.startingPosition, this.currentPosition);
                 console.log('Distance from start:', this.distanceFromStart);
@@ -69,7 +83,6 @@ export class Task2Component implements OnInit {
                   this.completeTask();
                 }
 
-                // Trigger manual change detection to update UI
                 this.cdr.detectChanges();
               }
             } else if (err) {
@@ -82,6 +95,7 @@ export class Task2Component implements OnInit {
     }
   }
 
+  // Stop tracking the position
   stopTracking() {
     if (this.watchId) {
       Geolocation.clearWatch({ id: this.watchId });
@@ -90,10 +104,11 @@ export class Task2Component implements OnInit {
     }
   }
 
+  // Show the exit dialog
   async showExitDialog() {
     const { value } = await Dialog.confirm({
-      title: 'Exit Run',
-      message: 'Are you sure you want to exit your current run?',
+      title: 'Exit Task',
+      message: 'Are you sure you want to exit?',
       okButtonTitle: 'Yes',
       cancelButtonTitle: 'No',
     });
@@ -103,6 +118,7 @@ export class Task2Component implements OnInit {
     }
   }
 
+  // Show information about the task
   async showInfoDialog() {
     await Dialog.alert({
       title: 'Information',
@@ -111,11 +127,12 @@ export class Task2Component implements OnInit {
     });
   }
 
+  // Mark the task as complete and emit the event to navigate
   private completeTask() {
-    this.isTaskComplete = true; // Ensure the task cannot be reverted
-    this.stopTracking(); // Stop tracking position to optimize resources
+    this.isTaskComplete = true; // Prevent reverting the task state
+    this.stopTracking(); // Stop tracking to optimize resources
     setTimeout(() => {
-      this.taskCompleted.emit(); // Notify parent component of task completion
-    }, 3000); // Wait for 3 seconds before emitting the event
+      this.taskCompleted.emit(); // Notify the parent component (GameComponent)
+    }, 3000); // Wait 3 seconds before emitting the event
   }
 }

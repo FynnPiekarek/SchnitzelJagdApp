@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, OnDestroy, Output } from '@angular/core';
 import { Device } from '@capacitor/device';
 import { Dialog } from '@capacitor/dialog';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { IonContent, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { NgStyle } from '@angular/common';
 
@@ -24,10 +24,13 @@ export class Task4Component implements OnInit, OnDestroy {
   isPluggedIn: boolean = false; // Track if the phone is plugged in
   isTaskComplete: boolean = false; // Ensure the task completion state is preserved
   batteryCheckInterval: any; // Variable to hold the interval reference
+  taskIndex: number = 4; // Default task index for this component
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private route: ActivatedRoute) {}
 
   async ngOnInit() {
+    this.syncTaskIndexWithRoute(); // Sync task index with the route
+
     await this.checkIfPluggedIn();
 
     // Start polling battery status every 1 second
@@ -41,6 +44,14 @@ export class Task4Component implements OnInit, OnDestroy {
     }, 1000);
   }
 
+  // Sync the task index with the current route
+  private syncTaskIndexWithRoute(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.taskIndex = params['taskIndex'] ? +params['taskIndex'] : this.taskIndex;
+    });
+  }
+
+  // Check if the phone is plugged in
   async checkIfPluggedIn() {
     try {
       const batteryInfo = await Device.getBatteryInfo();
@@ -52,12 +63,13 @@ export class Task4Component implements OnInit, OnDestroy {
     }
   }
 
+  // Mark the task as complete
   private completeTask() {
-    this.isTaskComplete = true; // Ensure the task cannot be reverted
+    this.isTaskComplete = true; // Prevent the task from being reverted
     clearInterval(this.batteryCheckInterval); // Stop polling the battery status
 
     setTimeout(() => {
-      this.taskCompleted.emit(); // Notify parent component of task completion
+      this.taskCompleted.emit(); // Notify the parent component (GameComponent) of task completion
     }, 3000); // Wait for 3 seconds before emitting the event
   }
 

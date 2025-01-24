@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
 
 @Component({
@@ -11,8 +12,20 @@ export class Task3Component {
 
   private readonly VALID_QR_CODE = 'M335@ICT-BZ';
   isTaskComplete: boolean = false; // Ensure the task completion state is preserved
+  taskIndex: number = 3; // Default task index for this component
 
-  constructor() {}
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    this.syncTaskIndexWithRoute(); // Sync task index with route on initialization
+  }
+
+  // Sync the task index with the current route
+  private syncTaskIndexWithRoute(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.taskIndex = params['taskIndex'] ? +params['taskIndex'] : this.taskIndex;
+    });
+  }
 
   async scanQRCode(): Promise<void> {
     try {
@@ -37,10 +50,10 @@ export class Task3Component {
     }
   }
 
-  private completeTask() {
+  private completeTask(): void {
     this.isTaskComplete = true; // Ensure the task cannot be reverted
     setTimeout(() => {
-      this.taskCompleted.emit(); // Notify parent component of task completion
+      this.taskCompleted.emit(); // Notify parent component (GameComponent) of task completion
     }, 3000); // Wait for 3 seconds before emitting the event
   }
 }

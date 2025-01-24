@@ -4,6 +4,7 @@ import { User } from '../User';
 import { Geolocation } from '@capacitor/geolocation';
 import { Camera } from '@capacitor/camera';
 import { Dialog } from '@capacitor/dialog';
+import {Router} from "@angular/router";
 import {
   IonAvatar,
   IonButton,
@@ -14,6 +15,7 @@ import {
   IonListHeader,
   IonNote
 } from "@ionic/angular/standalone";
+import {routes} from "../app.routes";
 
 @Component({
   selector: 'app-leaderboard',
@@ -36,7 +38,7 @@ export class LeaderboardComponent implements OnInit {
   nextUserId: number = 1;
   private _storage: Storage | null = null;
 
-  constructor(private storage: Storage) {}
+  constructor(private storage: Storage, private router:Router) {}
 
   async ngOnInit() {
     this._storage = await this.storage.create();
@@ -116,6 +118,10 @@ export class LeaderboardComponent implements OnInit {
       // Kamera-Berechtigung anfordern
       const cameraPermission = await Camera.requestPermissions({permissions:['camera']});
       console.log('Kameraberechtigung:', cameraPermission);
+
+      if(geoPermission.location && cameraPermission.camera == 'granted') {
+        this.router.navigate(['game']);
+      }
 
     } catch (error) {
       console.error('Fehler beim Anfordern der Berechtigungen:', error);

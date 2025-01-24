@@ -7,14 +7,14 @@ import { Router } from '@angular/router';
 import { IonButton, IonContent, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { Dialog } from '@capacitor/dialog';
 
-/*const EXPECTED_COORDS = {
+const EXPECTED_COORDS = {
   latitude: 47.071945403994924,
   longitude: 8.348885173299777,
-};*/
-const EXPECTED_COORDS = {
+};
+/*const EXPECTED_COORDS = {
   latitude: 47.039548,
   longitude: 8.322323,
-};
+};*/
 
 @Component({
   selector: 'app-task1',
@@ -56,7 +56,7 @@ export class Task1Component implements OnInit {
 
             this.distanceToTarget = haversineDistance(this.currentPosition, EXPECTED_COORDS);
 
-            this.isInTargetArea = this.distanceToTarget <= 10;
+            this.isInTargetArea = this.distanceToTarget <= 1000;
 
             this.cdr.detectChanges();
 
@@ -106,8 +106,6 @@ export class Task1Component implements OnInit {
   private completeTask() {
     this.isTaskComplete = true; // Ensure the task cannot be reverted
     this.stopWatchingPosition(); // Stop tracking position to preserve resources
-    setTimeout(() => {
-      this.taskCompleted.emit(); // Notify parent component that task is complete
-    }, 3000); // Wait for 3 seconds before emitting the completion event
+    this.taskCompleted.emit(); // Notify parent component that task is completet
   }
 }

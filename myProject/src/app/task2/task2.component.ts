@@ -77,7 +77,7 @@ export class Task2Component implements OnInit {
                 console.log('Distance from start:', this.distanceFromStart);
 
                 // Check if the user is at least 10m away
-                this.isFarEnough = this.distanceFromStart >= 10;
+                this.isFarEnough = this.distanceFromStart >= 0;
 
                 if (this.isFarEnough && !this.isTaskComplete) {
                   this.completeTask();
@@ -131,8 +131,6 @@ export class Task2Component implements OnInit {
   private completeTask() {
     this.isTaskComplete = true; // Prevent reverting the task state
     this.stopTracking(); // Stop tracking to optimize resources
-    setTimeout(() => {
-      this.taskCompleted.emit(); // Notify the parent component (GameComponent)
-    }, 3000); // Wait 3 seconds before emitting the event
+    this.taskCompleted.emit(); // Notify the parent component (GameComponent)
   }
 }

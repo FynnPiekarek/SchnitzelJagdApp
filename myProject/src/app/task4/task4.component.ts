@@ -68,9 +68,7 @@ export class Task4Component implements OnInit, OnDestroy {
     this.isTaskComplete = true; // Prevent the task from being reverted
     clearInterval(this.batteryCheckInterval); // Stop polling the battery status
 
-    setTimeout(() => {
-      this.taskCompleted.emit(); // Notify the parent component (GameComponent) of task completion
-    }, 3000); // Wait for 3 seconds before emitting the event
+    this.taskCompleted.emit(); // Notify the parent component (GameComponent) of task completion
   }
 
   ngOnDestroy() {

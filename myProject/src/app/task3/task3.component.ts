@@ -52,8 +52,6 @@ export class Task3Component {
 
   private completeTask(): void {
     this.isTaskComplete = true; // Ensure the task cannot be reverted
-    setTimeout(() => {
-      this.taskCompleted.emit(); // Notify parent component (GameComponent) of task completion
-    }, 3000); // Wait for 3 seconds before emitting the event
+    this.taskCompleted.emit(); // Notify parent component (GameComponent) of task completion
   }
 }

@@ -114,7 +114,7 @@ export class LeaderboardComponent implements OnInit {
       console.log('Standortberechtigung:', geoPermission);
 
       // Kamera-Berechtigung anfordern
-      const cameraPermission = await Camera.requestPermissions();
+      const cameraPermission = await Camera.requestPermissions({permissions:['camera']});
       console.log('Kameraberechtigung:', cameraPermission);
 
     } catch (error) {

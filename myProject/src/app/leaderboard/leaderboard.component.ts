@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
-import { AlertController } from '@ionic/angular';
 import { User } from '../User';
+import { Geolocation } from '@capacitor/geolocation';
+import { Camera } from '@capacitor/camera';
+import { Dialog } from '@capacitor/dialog';
 import {
   IonAvatar,
   IonButton,
@@ -12,26 +14,21 @@ import {
   IonListHeader,
   IonNote
 } from "@ionic/angular/standalone";
-import {addIcons} from "ionicons";
-import {personCircleOutline} from "ionicons/icons";
-import {Capacitor} from "@capacitor/core";
-import {Geolocation} from "@capacitor/geolocation";
-import {Camera, CameraResultType, CameraPermissionType} from "@capacitor/camera";
 
 @Component({
   selector: 'app-leaderboard',
   templateUrl: './leaderboard.component.html',
-  styleUrls: ['./leaderboard.component.scss'],
   imports: [
     IonList,
-    IonLabel,
     IonListHeader,
+    IonLabel,
     IonItem,
     IonAvatar,
     IonIcon,
     IonNote,
     IonButton
-  ]
+  ],
+  styleUrls: ['./leaderboard.component.scss']
 })
 export class LeaderboardComponent implements OnInit {
   Users: User[] = [];
@@ -39,9 +36,7 @@ export class LeaderboardComponent implements OnInit {
   nextUserId: number = 1;
   private _storage: Storage | null = null;
 
-  constructor(private alertController: AlertController, private storage: Storage) {
-    addIcons({personCircleOutline})
-  }
+  constructor(private storage: Storage) {}
 
   async ngOnInit() {
     this._storage = await this.storage.create();
@@ -64,100 +59,68 @@ export class LeaderboardComponent implements OnInit {
       id: this.nextUserId++,
       name: name,
       time: 0,
-      booms: 0,
+      booms: 0
     };
 
     this.AllUsers.push(newUser);
     this.saveUsers().then(r => this.Users);
   }
 
-  async presentAlert() {
-    const alert = await this.alertController.create({
-      header: 'Before we start',
-      message: 'Please enter your name to start the game',
-      inputs: [
-        {
-          name: 'username',
-          type: 'text',
-          placeholder: 'Enter your name',
-          attributes: {
-            id: 'username-input',
-          },
-        },
-      ],
-      buttons: [
-        {
-          text: 'Quit',
-          role: 'cancel',
-          handler: () => {
-            console.log('Game exited by user');
-          },
-        },
-        {
-          text: 'Save',
-          handler: (data) => {
-            if (data.username) {
-              this.addUser(data.username);
-              this.showAllowAccessAlert()
-            }
-          },
-          cssClass: 'save-button',
-          role: 'save',
-        },
-      ],
+  /** Haupt-Funktion: Erster Alert zur Eingabe des Namens, dann Zugriffsanfrage */
+  async startGame() {
+    // Prompt zum Eingeben des Namens
+    const { value: username, cancelled } = await Dialog.prompt({
+      title: 'Before we start',
+      message: 'Please enter your name to start the game:',
+      inputPlaceholder: 'Enter your name'
     });
 
-    await alert.present();
+    if (cancelled) {
+      console.log('Spiel abgelehnt');
+      return; // Abbrechen, wenn der User den Prompt abbricht
+    }
 
-    const inputElement = document.getElementById('username-input') as HTMLInputElement;
-    const saveButton = document.getElementsByClassName('save-button')[0] as HTMLButtonElement;
-
-    inputElement.addEventListener('input', () => {
-      saveButton.disabled = !inputElement.value.trim();
-    });
+    if (username?.trim()) {
+      this.addUser(username); // Name zur Liste hinzufügen
+      this.showAllowAccessDialog(); // Nächster Dialog für Zugriffserlaubnis
+    } else {
+      await Dialog.alert({
+        title: 'Error',
+        message: 'Bitte gib einen gültigen Namen ein!'
+      });
+    }
   }
 
-  async showAllowAccessAlert() {
-    const alert = await this.alertController.create({
-      header: 'Zugriffsanfrage erforderlich',
-      message: 'Möchtest du den Zugriff auf die Kamera und den Standort erlauben?',
-      buttons: [
-        {
-          text: 'Ablehnen',
-          role: 'cancel',
-          handler: () => {
-            console.log('Berechtigungen wurden abgelehnt');
-          },
-        },
-        {
-          text: 'Erlauben',
-          handler: () => {
-            this.requestPermissions();
-          },
-        },
-      ],
+  /** Zweiter Alert: Zugriff auf Standort und Kamera */
+  async showAllowAccessDialog() {
+    const { value } = await Dialog.confirm({
+      title: 'Zugriffsanfrage erforderlich',
+      message: 'Möchtest du der App Zugriff auf Kamera und Standort erlauben?'
     });
 
-    await alert.present();
+    if (value) {
+      console.log('Zugriff akzeptiert');
+      this.requestPermissions(); // Berechtigungen anfordern
+    } else {
+      console.log('Berechtigungen wurden abgelehnt');
+    }
   }
 
+  /** Zugriff auf Standort und Kamera-Berechtigungen anfordern */
   async requestPermissions() {
     try {
-      if (Capacitor) {
-        const geoPermission = await Geolocation.requestPermissions();
-        console.log('Standortberechtigung:', geoPermission);
+      // Standort-Berechtigung anfordern
+      const geoPermission = await Geolocation.requestPermissions();
+      console.log('Standortberechtigung:', geoPermission);
 
-        const cameraPermission = await Camera.requestPermissions();
-        console.log('Kameraberechtigung:', cameraPermission);
+      // Kamera-Berechtigung anfordern
+      const cameraPermission = await Camera.requestPermissions();
+      console.log('Kameraberechtigung:', cameraPermission);
 
-      } else {
-        console.warn('Berechtigungen können nur auf nativen Plattformen angefordert werden.');
-      }
     } catch (error) {
       console.error('Fehler beim Anfordern der Berechtigungen:', error);
     }
   }
-
 
   displayTopUsers(): void {
     this.Users = [...this.AllUsers];

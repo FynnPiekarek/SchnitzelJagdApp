@@ -1,26 +1,35 @@
 <ion-list class="leaderboard-list">
-    <ion-list-header>
-        <ion-label class="Leaderboard-title">Leaderboard</ion-label>
-    </ion-list-header>
-    @for (user of Users; track user.id) {
-        <ion-item>
-            <ion-avatar slot="start">
-                <ion-icon name="person-circle-outline" size="large"></ion-icon>
-            </ion-avatar>
-            <ion-label>
-                <h2 class="user-name">{{user.name}}</h2>
-                <p class="user-time">Time: {{user.time}}</p>
-            </ion-label>
-            @if (user.booms) {
-                <ion-note slot="end">💥 {{user.booms}}x</ion-note>
-            }
-            @if (user.poops) {
-                <ion-note slot="end">💩 {{user.poops}}x</ion-note>
-            }
-        </ion-item>
-    }
-    <ion-button (click)="onButtonClick()" fill="clear">see more</ion-button>
+  <ion-list-header>
+    <ion-label class="Leaderboard-title">Leaderboard</ion-label>
+  </ion-list-header>
 
+  <!-- Benutzerliste mit @for -->
+  @for (user of Users; track user.id) {
+    <ion-item>
+      <!-- Avatar mit Icon -->
+      <ion-avatar slot="start">
+        <ion-icon name="person-circle-outline" size="large"></ion-icon>
+      </ion-avatar>
+
+      <!-- Benutzerinformationen anzeigen -->
+      <ion-label>
+        <h2 class="user-name">{{ user.name }}</h2>
+        <p class="user-time">Time: {{ user.time }}</p>
+      </ion-label>
+
+      <!-- Zusätzliche Informationen (optional) -->
+      @if (user.booms) {
+        <ion-note slot="end">💥 {{ user.booms }}x</ion-note>
+      }
+      @if (user.poops) {
+        <ion-note slot="end">💩 {{ user.poops }}x</ion-note>
+      }
+    </ion-item>
+  }
+
+  <!-- Button zum Anzeigen weiterer Benutzer -->
+  <ion-button (click)="onButtonClick()" fill="clear">See more</ion-button>
 </ion-list>
-<ion-button (click)="presentAlert()"  class="StartBtn" expand="block" >Start Game</ion-button>
 
+<!-- Spielstart-Button -->
+<ion-button (click)="startGame()" class="StartBtn" expand="block">Start Game</ion-button>

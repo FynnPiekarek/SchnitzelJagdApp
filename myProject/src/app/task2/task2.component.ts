@@ -77,7 +77,7 @@ export class Task2Component implements OnInit {
                 console.log('Distance from start:', this.distanceFromStart);
 
                 // Check if the user is at least 10m away
-                this.isFarEnough = this.distanceFromStart >= 0;
+                this.isFarEnough = this.distanceFromStart >= 10;
 
                 if (this.isFarEnough && !this.isTaskComplete) {
                   this.completeTask();

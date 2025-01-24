@@ -56,7 +56,7 @@ export class Task1Component implements OnInit {
 
             this.distanceToTarget = haversineDistance(this.currentPosition, EXPECTED_COORDS);
 
-            this.isInTargetArea = this.distanceToTarget <= 1000;
+            this.isInTargetArea = this.distanceToTarget <= 10;
 
             this.cdr.detectChanges();
 

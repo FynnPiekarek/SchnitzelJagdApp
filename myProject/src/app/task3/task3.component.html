@@ -1,3 +1,27 @@
-<div class="scanner-container">
-  <button (click)="scanQRCode()">Scan QR Code</button>
-</div>
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="task-title">{{ taskIndex }}/4</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="distance-container">
+    <button
+      class="main-button"
+      [ngClass]="{ 'red-button': !isScanning, 'green-button': isScanning }"
+      (click)="scanQRCode()"
+    >
+      {{ isScanning ? 'Scanning...' : 'Scan QR Code' }}
+    </button>
+  </div>
+
+  <div class="buttons-container">
+    <button class="circle-button red-button" (click)="showExitDialog()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+
+    <button class="circle-button grey-button" (click)="showInfoDialog()">
+      <ion-icon name="information-outline"></ion-icon>
+    </button>
+  </div>
+</ion-content>

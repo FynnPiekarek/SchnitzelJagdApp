@@ -12,7 +12,7 @@ import { PLATFORM_ID } from '@angular/core';
 
 export const routes: Routes = [
   {
-    path: '', component: GameComponent
+    path: '', component: LeaderboardComponent
   },
 
   { path: 'game', component: GameComponent },
